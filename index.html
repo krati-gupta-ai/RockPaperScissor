@@ -8,20 +8,22 @@
 </head>
 <body>
     <h1>Rock Paper Scissors</h1>
+
     <div class="choices">
         <div class="choice" id="Rock">
-            <img src="./image/rockgame.jpg">
+            <img src="./image/rockgame.jpg" alt="Rock">
         </div>
         <div class="choice" id="Paper">
             <img src="./image/papergame.png">
         </div>
-        <div class="choice" id="Scissor">
+        <div class="choice" id="Scissors">
             <img src="./image/scissorgame.png">
         </div>
      </div>   
         <div class="score-board">
             <div class="score">
                 <p id="user-score">0</p>
+                <p id="user-label"></p>
                 <p>you</p>
             </div>
             <div class="score">
@@ -33,6 +35,7 @@
             <p id="msg">play your move</p>
         </div>
 
+    <button id="change-name">Change Name</button>
     <script src="game.js"></script>
 </body>
 </html>
