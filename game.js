@@ -1,5 +1,8 @@
 let userScore=0;
 let compScore=0;
+let totalRounds=5;
+let currentRound=0;
+let gameActive=false;
 
 let playerName = localStorage.getItem("playerName") || "";
 
@@ -61,7 +64,7 @@ const drawGame=()=>{
     drawSound.play();
 
     msg.style.backgroundColor="#081b31";
-    msg.className="draw";
+    msg.className="flash-draw";
 };
 
 const showWinner=(userWin, userChoice, compChoice)=>{
@@ -76,7 +79,7 @@ const showWinner=(userWin, userChoice, compChoice)=>{
         winSound.play();
 
 
-        msg.className = "win";
+        msg.className = "flash-win";
         msg.style.backgroundColor="green";
     }
     else{
@@ -89,16 +92,29 @@ const showWinner=(userWin, userChoice, compChoice)=>{
         loseSound.currentTime = 0;
         loseSound.play();
 
-        msg.className = "lose";
+        msg.className = "flash-lose";
         msg.style.backgroundColor="red";
     }
 };
 
 const playGame=(userChoice)=>{
+    if(!gameActive){
+        msg.innerText="Click Start Game to begin!";
+        return;
+    }
+
+    if(currentRound >= totalRounds ){
+        msg.innerText = "Game over! Please start to play again.";
+        return;
+    }
+
     console.log("user choice = ",userChoice);
    //generate computer choice 
    const compChoice=geneCompChoice();
    console.log("computer choice = ",compChoice);
+
+   const choiceMsg = document.getElementById("choice-msg");
+   choiceMsg.innerText = `🧑 ${playerName} chose ${userChoice} | 💻 Computer chose ${compChoice}`;
 
    if(userChoice===compChoice){
     drawGame();
@@ -117,13 +133,26 @@ const playGame=(userChoice)=>{
         //rock , paper;
         userWin=compChoice==="Rock"?false:true;
     }
+
     showWinner(userWin,userChoice,compChoice);
    }
+   
+    currentRound++;
+    document.getElementById("round-info").innerText = `Round: ${currentRound} / ${totalRounds}`;
+
+    if( currentRound === totalRounds){
+        setTimeout(()=> endGame(), 500);  //wait half second for last messege
+    }
 };
 
 choice.forEach((choice) => {
     choice.addEventListener("click",()=>{
         const userChoice=choice.getAttribute("id");
+
+        // Flash highlight
+    choice.classList.add("selected");
+    setTimeout(() => choice.classList.remove("selected"), 500);
+
         clickSound.currentTime = 0;
         clickSound.play(); 
 
@@ -131,3 +160,62 @@ choice.forEach((choice) => {
         playGame(userChoice);
     });
 });
+
+function startGame(){
+    const inputRounds = document.getElementById("rounds").value;
+    totalRounds= inputRounds ? parseInt(inputRounds) : 5 ;
+    currentRound=0;
+    userScore=0;
+    compScore=0;
+    gameActive=true;
+
+    userScorePara.innerText = "0";
+    compScorePara.innerText = "0";
+    document.getElementById("round-info").innerText=`Round: ${currentRound} / ${totalRounds}`;
+    msg.innerText = `Game Started! Best of  ${totalRounds} rounds,First Move, ${playerName}.`;
+    msg.style.backgroundColor="#081b31";
+
+    document.body.classList.remove("player-win", "comp-win", "draw-game");
+}
+
+function endGame(){
+
+     document.body.classList.remove("player-win", "comp-win", "draw-game");
+
+    if(userScore > compScore){
+        msg.innerText=`🎉 ${playerName} Wins the Game! Final Score: ${userScore} - ${compScore}`;
+        msg.style.backgroundColor = "green";
+        msg.classList.add("flash-win");
+        document.body.classList.add("player-win");
+    }
+    else if(compScore > userScore){
+        msg.innerText = `💻 Computer Wins the Game! Final Score: ${compScore} - ${userScore}`;
+        msg.style.backgroundColor = "red";
+        msg.classList.add("flash-lose");
+        document.body.classList.add("comp-win");
+    }
+    else {
+        msg.innerText = `🤝 It's a Draw Match! Final Score: ${userScore} - ${compScore}`;
+        msg.style.backgroundColor = "orange";
+        msg.classList.add("flash-draw");
+    }
+
+// // Show Restart Button
+// const restartBtn = document.createElement("button");
+// restartBtn.innerText = "🔄 Restart Game";
+// restartBtn.classList.add("restart-btn");
+// restartBtn.onclick = startGame;
+
+// // Add button below the message
+// msg.appendChild(document.createElement("br"));
+// msg.appendChild(restartBtn);    
+
+// ✅ Put restart button into controls div
+    const controls = document.getElementById("controls");
+    controls.innerHTML = ""; // clear old buttons
+    const restartBtn = document.createElement("button");
+    restartBtn.innerText = "🔄 Restart Game";
+    restartBtn.classList.add("restart-btn");
+    restartBtn.onclick = startGame;
+    controls.appendChild(restartBtn);
+}

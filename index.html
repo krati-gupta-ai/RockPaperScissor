@@ -6,9 +6,14 @@
     <title>Document</title>
     <link rel="stylesheet" href="game.css">
 </head>
+<div class="game-container">
 <body>
     <h1>Rock Paper Scissors</h1>
-
+    <div class="rounds-setup">
+        <label for="rounds">Enter Rounds(default 5): </label>
+        <input type="number" id="rounds" min="1" value="5">
+        <button onclick="startGame()">Start Game</button>
+    </div>
     <div class="choices">
         <div class="choice" id="Rock">
             <img src="./image/rockgame.jpg" alt="Rock">
@@ -31,11 +36,15 @@
                 <p>comp</p>
             </div>
         </div>
-        <div id="messg-conatiner">
+        <p id="round-info">Round: 0/5</p>
+        <div id="messg-container">
             <p id="msg">play your move</p>
+            <p id="choice-msg"></p>
         </div>
+        <div id="controls"></div>
 
     <button id="change-name">Change Name</button>
     <script src="game.js"></script>
 </body>
+</div>
 </html>
